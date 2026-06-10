@@ -1,20 +1,20 @@
 [
   {
-    "id": "mq7zff67hz94",
-    "title": "Oxford by Isolak",
+    "id": "mq7zuvl9u9dz",
+    "title": "Oxford by Isolak TONI",
     "slug": "oxford-by-isolak",
     "location": "Olode, Ibadan",
     "status": "Selling",
     "price": "22,000.00",
     "oldPrice": "",
-    "description": "Own 300, 450, 600 SQM or 500 SQM commercial plots in this 100-acre estate at Olode, Ibadan.",
+    "description": "",
     "acreage": "100 acres",
-    "dimensions": "300 Sqm, 450 Sqm, 600 Sqm\n500 Sqm Commercial",
+    "dimensions": "300 Sqm, 450 Sqm, 600 Sqm500 Sqm Commercial",
     "landmarks": "Circular Road, International Airport, Iwo Road Express via Academy Bus Stop",
     "categories": [
       "Investment",
-      "Commercial",
-      "Residential"
+      "Residential",
+      "Commercial"
     ],
     "amenities": [
       "Gate House",
@@ -26,12 +26,11 @@
     "images": [
       "https://framerusercontent.com/images/QbDFeedN7zn21YGOgHjeiuNHiC0.png",
       "",
-      "",
       ""
     ]
   },
   {
-    "id": "mq7zff67ocqi",
+    "id": "mq7zuvl9diyd",
     "title": "The Pine-View Cottage, Phase 1",
     "slug": "pine-view",
     "location": "Ido, Ibadan",
@@ -64,7 +63,7 @@
     ]
   },
   {
-    "id": "mq7zff67ywk7",
+    "id": "mq7zuvl9rvt4",
     "title": "The Pine-View Cottage, Phase 2",
     "slug": "pine-view-phase-2",
     "location": "Ido, Ibadan",
@@ -94,7 +93,7 @@
     ]
   },
   {
-    "id": "mq7zff67rmtg",
+    "id": "mq7zuvl9oq6t",
     "title": "Isolak Havens Estate, Phase 1",
     "slug": "isolak-havens-estate-phase-1",
     "location": "Akaran, Ibadan",
@@ -127,7 +126,7 @@
     ]
   },
   {
-    "id": "mq7zff67uf66",
+    "id": "mq7zuvl94vm8",
     "title": "Isolak Havens Estate, Phase 2",
     "slug": "isolak-havens-estate-phase-2",
     "location": "Akaran, Ibadan",
@@ -157,7 +156,7 @@
     ]
   },
   {
-    "id": "mq7zff67hqc2",
+    "id": "mq7zuvl9dlqv",
     "title": "Corfe Castle Estate",
     "slug": "corfe-castle-estate",
     "location": "Ayegun Olomi, Ibadan",
@@ -186,7 +185,7 @@
     ]
   },
   {
-    "id": "mq7zff67w33o",
+    "id": "mq7zuvl9u1bx",
     "title": "Olakunle's Court",
     "slug": "olakunles-court",
     "location": "Ologuneru, Ibadan",
@@ -215,7 +214,7 @@
     ]
   },
   {
-    "id": "mq7zff672ehd",
+    "id": "mq7zuvl90shd",
     "title": "Crystal Farmland Palace",
     "slug": "crystal-farmland-palace",
     "location": "Orile Ilugun, Abeokuta",
