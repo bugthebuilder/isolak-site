@@ -1,0 +1,241 @@
+[
+  {
+    "id": "mq7zff67hz94",
+    "title": "Oxford by Isolak",
+    "slug": "oxford-by-isolak",
+    "location": "Olode, Ibadan",
+    "status": "Selling",
+    "price": "22,000.00",
+    "oldPrice": "",
+    "description": "Own 300, 450, 600 SQM or 500 SQM commercial plots in this 100-acre estate at Olode, Ibadan.",
+    "acreage": "100 acres",
+    "dimensions": "300 Sqm, 450 Sqm, 600 Sqm\n500 Sqm Commercial",
+    "landmarks": "Circular Road, International Airport, Iwo Road Express via Academy Bus Stop",
+    "categories": [
+      "Investment",
+      "Commercial",
+      "Residential"
+    ],
+    "amenities": [
+      "Gate House",
+      "Road Network",
+      "Perimeter Fence",
+      "Electricity",
+      "24/7 Security"
+    ],
+    "images": [
+      "https://framerusercontent.com/images/QbDFeedN7zn21YGOgHjeiuNHiC0.png",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": "mq7zff67ocqi",
+    "title": "The Pine-View Cottage, Phase 1",
+    "slug": "pine-view",
+    "location": "Ido, Ibadan",
+    "status": "Sold out",
+    "price": "8,500.00",
+    "oldPrice": "9,500.00",
+    "description": "40 acres of prime opportunity. 450 SQM plots for investment, residential & commercial use.",
+    "acreage": "40 acres",
+    "dimensions": "450 sqm",
+    "landmarks": "Ladoke Akintola Train Station, FRSC Ido, Ido Market",
+    "categories": [
+      "Investment",
+      "Commercial",
+      "Residential"
+    ],
+    "amenities": [
+      "Gate House",
+      "Road Network",
+      "Perimeter Fence",
+      "Drainage & Sewage System",
+      "Electricity",
+      "CCTV",
+      "24/7 Security"
+    ],
+    "images": [
+      "https://framerusercontent.com/images/GwYHTzPDTSg4I39bSv17KvJy0w.png",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": "mq7zff67ywk7",
+    "title": "The Pine-View Cottage, Phase 2",
+    "slug": "pine-view-phase-2",
+    "location": "Ido, Ibadan",
+    "status": "Selling",
+    "price": "17,500.00",
+    "oldPrice": "",
+    "description": "Phase 1 sold out. Phase 2 is here. 20 acres with 450 & 600 SQM plots.",
+    "acreage": "20 acres",
+    "dimensions": "450 Sqm, 600 Sqm",
+    "landmarks": "Ladoke Akintola Train Station, FRSC, Ido Market",
+    "categories": [
+      "Investment",
+      "Residential"
+    ],
+    "amenities": [
+      "Gate House",
+      "Road Network",
+      "Perimeter Fence",
+      "Electricity",
+      "Solar Street Lights"
+    ],
+    "images": [
+      "https://framerusercontent.com/images/GwYHTzPDTSg4I39bSv17KvJy0w.png",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": "mq7zff67rmtg",
+    "title": "Isolak Havens Estate, Phase 1",
+    "slug": "isolak-havens-estate-phase-1",
+    "location": "Akaran, Ibadan",
+    "status": "Selling",
+    "price": "32,400.00",
+    "oldPrice": "",
+    "description": "Own 450 SQM or 500 SQM commercial plots in this 20-acre estate. Strategic location beside Ilaji Resorts.",
+    "acreage": "20 acres",
+    "dimensions": "450 Sqm, 500 Sqm Commercial",
+    "landmarks": "Ilaji Resorts, Circular Road, International Airport, Olorunsogo Bus Stop",
+    "categories": [
+      "Investment",
+      "Commercial",
+      "Residential"
+    ],
+    "amenities": [
+      "Gate House",
+      "Road Network",
+      "Perimeter Fence",
+      "Electricity",
+      "Sport Arena",
+      "CCTV",
+      "24/7 Security"
+    ],
+    "images": [
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": "mq7zff67uf66",
+    "title": "Isolak Havens Estate, Phase 2",
+    "slug": "isolak-havens-estate-phase-2",
+    "location": "Akaran, Ibadan",
+    "status": "Selling",
+    "price": "24,700.00",
+    "oldPrice": "",
+    "description": "Secure your future with 450 SQM plots in this 50-acre land banking haven.",
+    "acreage": "50 acres",
+    "dimensions": "450 Sqm",
+    "landmarks": "Ilaji Resorts, Circular Road, International Airport",
+    "categories": [
+      "Investment",
+      "Landbanking"
+    ],
+    "amenities": [
+      "Gate House",
+      "Road Network",
+      "Perimeter Fence",
+      "Electricity",
+      "24/7 Security"
+    ],
+    "images": [
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": "mq7zff67hqc2",
+    "title": "Corfe Castle Estate",
+    "slug": "corfe-castle-estate",
+    "location": "Ayegun Olomi, Ibadan",
+    "status": "Selling",
+    "price": "17,500.00",
+    "oldPrice": "",
+    "description": "Secure 450 SQM in this 50-acre estate positioned on the Circular Road.",
+    "acreage": "50 acres",
+    "dimensions": "450 Sqm",
+    "landmarks": "Circular Road, International Airport",
+    "categories": [
+      "Investment",
+      "Landbanking"
+    ],
+    "amenities": [
+      "Gate House",
+      "Road Network",
+      "Perimeter Fence",
+      "Electricity"
+    ],
+    "images": [
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": "mq7zff67w33o",
+    "title": "Olakunle's Court",
+    "slug": "olakunles-court",
+    "location": "Ologuneru, Ibadan",
+    "status": "Selling",
+    "price": "20,500.00",
+    "oldPrice": "",
+    "description": "An exclusive 2-acre residential and investment estate in Ologuneru, Ibadan.",
+    "acreage": "2 acres",
+    "dimensions": "450 Sqm",
+    "landmarks": "God's Knot Hospital, FoodCo, Ologuneru Bus Stop, Eleyele Bus Stop",
+    "categories": [
+      "Investment",
+      "Residential"
+    ],
+    "amenities": [
+      "Gate House",
+      "Road Network",
+      "Perimeter Fence",
+      "Electricity"
+    ],
+    "images": [
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": "mq7zff672ehd",
+    "title": "Crystal Farmland Palace",
+    "slug": "crystal-farmland-palace",
+    "location": "Orile Ilugun, Abeokuta",
+    "status": "Sold out",
+    "price": "0.00",
+    "oldPrice": "",
+    "description": "Own 900, 1,800 or 2,700 SQM in this 30-acre farmland estate at Orile Ilugun, Abeokuta.",
+    "acreage": "30 acres",
+    "dimensions": "900 Sqm, 1,800 Sqm, 2,700 Sqm",
+    "landmarks": "Omi Adio",
+    "categories": [
+      "Landbanking",
+      "Farming"
+    ],
+    "amenities": [],
+    "images": [
+      "",
+      "",
+      "",
+      ""
+    ]
+  }
+]

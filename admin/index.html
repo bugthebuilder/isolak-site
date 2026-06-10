@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isolak Admin Panel</title>
+<style>
+  :root {
+    --blue: #0638CF;
+    --blue-light: #e8edfb;
+    --blue-dark: #042499;
+    --black: #0D0D0D;
+    --gray: #6b7280;
+    --gray-light: #f3f4f6;
+    --gray-border: #e5e7eb;
+    --white: #ffffff;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --orange: #ea580c;
+    --orange-light: #ffedd5;
+    --yellow-light: #fefce8;
+    --yellow: #ca8a04;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8f9fb;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── LAYOUT ── */
+  #app { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 230px;
+    background: var(--white);
+    border-right: 1px solid var(--gray-border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .sidebar-brand {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .sidebar-brand .brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: -.3px;
+  }
+  .sidebar-brand .brand-sub {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 1px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 12px 10px;
+    overflow-y: auto;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: 10px 10px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--gray);
+    font-weight: 500;
+    transition: all .15s;
+    margin-bottom: 2px;
+    user-select: none;
+  }
+  .nav-item:hover { background: var(--gray-light); color: var(--black); }
+  .nav-item.active { background: var(--blue-light); color: var(--blue); }
+  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--blue);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 99px;
+  }
+
+  .sidebar-footer {
+    padding: 14px 16px;
+    border-top: 1px solid var(--gray-border);
+    font-size: 12px;
+    color: var(--gray);
+  }
+
+  .main {
+    margin-left: 230px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-border);
+    padding: 0 28px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar-title { font-size: 16px; font-weight: 700; color: var(--black); }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  .content { padding: 28px; flex: 1; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0638CF 0%, #042499 100%);
+  }
+  .login-card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px 36px;
+    width: 360px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  }
+  .login-logo { font-size: 26px; font-weight: 800; color: var(--blue); letter-spacing: -.5px; margin-bottom: 4px; }
+  .login-sub { color: var(--gray); font-size: 13px; margin-bottom: 28px; }
+  .login-error { background: var(--red-light); color: var(--red); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 16px; display: none; }
+
+  /* ── FORM ELEMENTS ── */
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 6px;
+  }
+  input[type=text], input[type=password], input[type=email], input[type=url], input[type=number],
+  textarea, select {
+    width: 100%;
+    border: 1.5px solid var(--gray-border);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--black);
+    background: white;
+    transition: border-color .15s;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(6,56,207,.1); }
+  textarea { resize: vertical; min-height: 90px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+    font-family: inherit;
+    line-height: 1;
+  }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .btn-outline { background: white; color: var(--black); border: 1.5px solid var(--gray-border); }
+  .btn-outline:hover { background: var(--gray-light); }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: #fecaca; }
+  .btn-success { background: var(--green-light); color: var(--green); }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+  .btn-full { width: 100%; justify-content: center; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border: 1px solid var(--gray-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--gray-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title { font-size: 15px; font-weight: 700; }
+  .card-body { padding: 20px 22px; }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--gray-border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .stat-label { font-size: 11px; color: var(--gray); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .stat-value { font-size: 28px; font-weight: 800; color: var(--black); }
+  .stat-icon { font-size: 20px; float: right; margin-top: -2px; opacity: .6; }
+
+  /* ── ITEM LIST ── */
+  .item-list { }
+  .item-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 22px;
+    border-bottom: 1px solid var(--gray-border);
+    transition: background .1s;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-row:hover { background: #fafafa; }
+  .item-thumb {
+    width: 52px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    background: var(--gray-light);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--gray);
+    overflow: hidden;
+  }
+  .item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-title { font-weight: 600; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-meta { font-size: 12px; color: var(--gray); margin-top: 1px; }
+  .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  /* ── TAGS / BADGES ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag-blue { background: var(--blue-light); color: var(--blue); }
+  .tag-green { background: var(--green-light); color: var(--green); }
+  .tag-red { background: var(--red-light); color: var(--red); }
+  .tag-orange { background: var(--orange-light); color: var(--orange); }
+  .tag-yellow { background: var(--yellow-light); color: var(--yellow); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 500;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 560px;
+    box-shadow: var(--shadow-md);
+    margin: auto;
+  }
+  .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--gray-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-title { font-size: 16px; font-weight: 700; }
+  .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray); padding: 2px 6px; border-radius: 4px; }
+  .modal-close:hover { background: var(--gray-light); }
+  .modal-body { padding: 22px 24px; }
+  .modal-footer { padding: 14px 24px 20px; display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* ── TOAST ── */
+  #toast-container {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    background: var(--black);
+    color: white;
+    padding: 12px 18px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn .2s ease;
+    min-width: 220px;
+  }
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+  @keyframes slideIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ── GRID LAYOUT ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  /* ── SEARCH BAR ── */
+  .search-bar {
+    position: relative;
+    flex: 1;
+    max-width: 280px;
+  }
+  .search-bar input {
+    padding-left: 34px;
+    background: var(--gray-light);
+    border-color: transparent;
+  }
+  .search-bar::before {
+    content: '🔍';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--gray);
+  }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--gray-border); margin-bottom: 20px; }
+  .tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .tab-btn:hover { color: var(--black); }
+  .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* ── AMENITIES ── */
+  .amenity-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .amenity-tag {
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .amenity-tag button { background: none; border: none; cursor: pointer; font-size: 14px; color: var(--blue); padding: 0; line-height: 1; }
+
+  /* ── IMAGE PREVIEW ── */
+  .img-preview {
+    width: 100%;
+    height: 130px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    border: 1px solid var(--gray-border);
+    margin-top: 6px;
+    display: none;
+  }
+  .img-preview.show { display: block; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Isolak</div>
+    <div class="login-sub">Admin Panel — Sign in to continue</div>
+    <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="login-password" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()">Sign in →</button>
+    <p style="font-size:11px;color:var(--gray);margin-top:14px;text-align:center;">Default password: <strong>isolak2024</strong> — change it in Settings</p>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="app" style="display:none;">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">Isolak</div>
+      <div class="brand-sub">Content Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" onclick="goTo('dashboard')" data-page="dashboard">
+        <span class="icon">📊</span> Dashboard
+      </div>
+
+      <div class="nav-section-label" style="margin-top:8px;">Content</div>
+      <div class="nav-item" onclick="goTo('properties')" data-page="properties">
+        <span class="icon">🏡</span> Properties
+        <span class="badge" id="nav-prop-count">0</span>
+      </div>
+      <div class="nav-item" onclick="goTo('blog')" data-page="blog">
+        <span class="icon">📝</span> Blog Posts
+        <span class="badge" id="nav-blog-count">0</span>
+      </div>
+      <div class="nav-item" onclick="goTo('team')" data-page="team">
+        <span class="icon">👥</span> Team
+        <span class="badge" id="nav-team-count">0</span>
+      </div>
+
+      <div class="nav-section-label" style="margin-top:8px;">Site</div>
+      <div class="nav-item" onclick="goTo('export')" data-page="export">
+        <span class="icon">📦</span> Export Data
+      </div>
+      <div class="nav-item" onclick="goTo('settings')" data-page="settings">
+        <span class="icon">⚙️</span> Settings
+      </div>
+    </nav>
+    <div class="sidebar-footer">Isolak Admin v1.0</div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-actions" id="topbar-actions"></div>
+    </header>
+    <div class="content">
+
+      <!-- ── DASHBOARD ── -->
+      <div id="page-dashboard" class="screen active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🏡</div>
+            <div class="stat-label">Properties</div>
+            <div class="stat-value" id="stat-props">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-label">Blog Posts</div>
+            <div class="stat-value" id="stat-blogs">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Team Members</div>
+            <div class="stat-value" id="stat-team">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Selling</div>
+            <div class="stat-value" id="stat-selling">0</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent Properties</span>
+              <button class="btn btn-outline btn-sm" onclick="goTo('properties')">View all</button>
+            </div>
+            <div id="dash-props-list" class="item-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent Blog Posts</span>
+              <button class="btn btn-outline btn-sm" onclick="goTo('blog')">View all</button>
+            </div>
+            <div id="dash-blog-list" class="item-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PROPERTIES ── -->
+      <div id="page-properties" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <div class="search-bar">
+              <input type="text" placeholder="Search properties…" oninput="renderProperties(this.value)">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openPropertyModal()">+ Add Property</button>
+          </div>
+          <div id="properties-list" class="item-list"></div>
+        </div>
+      </div>
+
+      <!-- ── BLOG ── -->
+      <div id="page-blog" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <div class="search-bar">
+              <input type="text" placeholder="Search blog posts…" oninput="renderBlog(this.value)">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openBlogModal()">+ Add Post</button>
+          </div>
+          <div id="blog-list" class="item-list"></div>
+        </div>
+      </div>
+
+      <!-- ── TEAM ── -->
+      <div id="page-team" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Team Members</span>
+            <button class="btn btn-primary btn-sm" onclick="openTeamModal()">+ Add Member</button>
+          </div>
+          <div id="team-list" class="item-list"></div>
+        </div>
+      </div>
+
+      <!-- ── EXPORT ── -->
+      <div id="page-export" class="screen">
+        <div style="max-width:600px;">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-header"><span class="card-title">📦 Export JSON Data</span></div>
+            <div class="card-body">
+              <p style="color:var(--gray);margin-bottom:18px;font-size:13px;">Download your content as JSON files to add to your site repository. Place them in a <code style="background:var(--gray-light);padding:1px 5px;border-radius:4px;">data/</code> folder alongside your HTML files.</p>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <button class="btn btn-outline" onclick="exportJSON('properties')">⬇️ Download properties.json</button>
+                <button class="btn btn-outline" onclick="exportJSON('blog')">⬇️ Download blog.json</button>
+                <button class="btn btn-outline" onclick="exportJSON('team')">⬇️ Download team.json</button>
+                <button class="btn btn-primary" onclick="exportAll()">⬇️ Download All (zip)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">🌐 GitHub Auto-Deploy</span></div>
+            <div class="card-body">
+              <p style="color:var(--gray);margin-bottom:16px;font-size:13px;">Connect to GitHub to auto-save content changes and trigger Netlify/Vercel deploys.</p>
+              <div class="form-group">
+                <label class="form-label">GitHub Token (Personal Access Token)</label>
+                <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" value="">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Repository (owner/repo)</label>
+                <input type="text" id="gh-repo" placeholder="yourusername/isolak-site">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Branch</label>
+                <input type="text" id="gh-branch" placeholder="main" value="main">
+              </div>
+              <button class="btn btn-primary" onclick="saveGitHubSettings()">Save GitHub Settings</button>
+              <p style="font-size:11px;color:var(--gray);margin-top:10px;">Once connected, every Save in Properties/Blog/Team will commit to GitHub and auto-trigger your deploy.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS ── -->
+      <div id="page-settings" class="screen">
+        <div style="max-width:480px;">
+          <div class="card">
+            <div class="card-header"><span class="card-title">⚙️ Admin Settings</span></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">Change Admin Password</label>
+                <input type="password" id="new-password" placeholder="New password">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="Repeat new password">
+              </div>
+              <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
+              <hr style="margin:20px 0;border-color:var(--gray-border);">
+              <button class="btn btn-danger" onclick="clearAllData()">🗑️ Reset All Content Data</button>
+              <p style="font-size:11px;color:var(--gray);margin-top:6px;">Removes all properties, blog posts and team members from this browser.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ============ PROPERTY MODAL ============ -->
+<div class="modal-overlay" id="property-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="prop-modal-title">Add Property</span>
+      <button class="modal-close" onclick="closeModal('property-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('prop', 'basic', this)">Basic Info</button>
+        <button class="tab-btn" onclick="switchTab('prop', 'details', this)">Details</button>
+        <button class="tab-btn" onclick="switchTab('prop', 'media', this)">Images</button>
+      </div>
+
+      <!-- Basic -->
+      <div id="prop-tab-basic">
+        <div class="form-grid">
+          <div class="full form-group">
+            <label class="form-label">Property Title *</label>
+            <input type="text" id="prop-title" placeholder="e.g. Oxford by Isolak">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" id="prop-location" placeholder="e.g. Olode, Ibadan">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select id="prop-status">
+              <option value="Selling">Selling</option>
+              <option value="Sold out">Sold out</option>
+              <option value="Coming soon">Coming soon</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Price (NGN)</label>
+            <input type="text" id="prop-price" placeholder="e.g. 22,000.00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Old Price (optional)</label>
+            <input type="text" id="prop-old-price" placeholder="e.g. 25,000.00">
+          </div>
+          <div class="full form-group">
+            <label class="form-label">Description</label>
+            <textarea id="prop-desc" placeholder="Property description…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div id="prop-tab-details" style="display:none;">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Total Acreage</label>
+            <input type="text" id="prop-acreage" placeholder="e.g. 100 acres">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Plot Dimensions</label>
+            <input type="text" id="prop-dimensions" placeholder="e.g. 300 Sqm, 450 Sqm">
+          </div>
+          <div class="full form-group">
+            <label class="form-label">Nearby Landmarks</label>
+            <textarea id="prop-landmarks" placeholder="e.g. Circular Road, Airport..." style="min-height:60px;"></textarea>
+          </div>
+          <div class="full form-group">
+            <label class="form-label">Categories (check all that apply)</label>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;">
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;"><input type="checkbox" class="prop-cat" value="Investment"> Investment</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;"><input type="checkbox" class="prop-cat" value="Residential"> Residential</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;"><input type="checkbox" class="prop-cat" value="Commercial"> Commercial</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;"><input type="checkbox" class="prop-cat" value="Landbanking"> Landbanking</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;"><input type="checkbox" class="prop-cat" value="Farming"> Farming</label>
+            </div>
+          </div>
+          <div class="full form-group">
+            <label class="form-label">Amenities</label>
+            <div style="display:flex;gap:8px;margin-bottom:8px;">
+              <input type="text" id="amenity-input" placeholder="e.g. Gate House" style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addAmenity();}">
+              <button class="btn btn-outline btn-sm" onclick="addAmenity()">Add</button>
+            </div>
+            <div class="amenity-tags" id="amenity-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media -->
+      <div id="prop-tab-media" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Cover Image URL</label>
+          <input type="url" id="prop-img1" placeholder="https://…" oninput="previewImg(this,'prop-prev1')">
+          <img class="img-preview" id="prop-prev1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image 2 URL</label>
+          <input type="url" id="prop-img2" placeholder="https://…" oninput="previewImg(this,'prop-prev2')">
+          <img class="img-preview" id="prop-prev2">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image 3 URL</label>
+          <input type="url" id="prop-img3" placeholder="https://…" oninput="previewImg(this,'prop-prev3')">
+          <img class="img-preview" id="prop-prev3">
+        </div>
+        <div class="form-group">
+          <label class="form-label">URL Slug (for property page)</label>
+          <input type="text" id="prop-slug" placeholder="e.g. oxford-by-isolak">
+          <p style="font-size:11px;color:var(--gray);margin-top:4px;">Used as the URL: /properties/<em>slug</em>/</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('property-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProperty()">Save Property</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BLOG MODAL ============ -->
+<div class="modal-overlay" id="blog-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="blog-modal-title">Add Blog Post</span>
+      <button class="modal-close" onclick="closeModal('blog-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="full form-group">
+          <label class="form-label">Post Title *</label>
+          <input type="text" id="blog-title" placeholder="e.g. When is the best time to sell?">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category / Tag</label>
+          <input type="text" id="blog-tag" placeholder="e.g. Real Estate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Author Name</label>
+          <input type="text" id="blog-author" placeholder="e.g. Sophia Hayes">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Author Role</label>
+          <input type="text" id="blog-author-role" placeholder="e.g. Client Relations">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="text" id="blog-date" placeholder="e.g. Jun 22, 2026">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reading Time</label>
+          <input type="text" id="blog-reading-time" placeholder="e.g. 7 min read">
+        </div>
+        <div class="full form-group">
+          <label class="form-label">Excerpt / Summary</label>
+          <textarea id="blog-excerpt" placeholder="Short description shown on the blog listing page…" style="min-height:70px;"></textarea>
+        </div>
+        <div class="full form-group">
+          <label class="form-label">Cover Image URL</label>
+          <input type="url" id="blog-image" placeholder="https://…" oninput="previewImg(this,'blog-prev')">
+          <img class="img-preview" id="blog-prev">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Author Profile Image URL</label>
+          <input type="url" id="blog-author-img" placeholder="https://…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Featured?</label>
+          <select id="blog-featured">
+            <option value="false">No</option>
+            <option value="true">Yes — show as featured</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('blog-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBlogPost()">Save Post</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TEAM MODAL ============ -->
+<div class="modal-overlay" id="team-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <span class="modal-title" id="team-modal-title">Add Team Member</span>
+      <button class="modal-close" onclick="closeModal('team-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input type="text" id="team-name" placeholder="e.g. Sophia Hayes">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role / Title</label>
+        <input type="text" id="team-role" placeholder="e.g. Client Relations">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="team-email" placeholder="e.g. sophia@isolak.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input type="text" id="team-phone" placeholder="e.g. +234 801 234 5678">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        <textarea id="team-bio" placeholder="Short bio…" style="min-height:70px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Profile Photo URL</label>
+        <input type="url" id="team-image" placeholder="https://…" oninput="previewImg(this,'team-prev')">
+        <img class="img-preview" id="team-prev" style="height:90px;width:90px;border-radius:50%;object-fit:cover;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('team-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTeamMember()">Save Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div id="toast-container"></div>
+
+<script>
+// ──────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────
+const DEFAULT_PASSWORD = 'isolak2024';
+const PASS_KEY = 'isolak_admin_pass';
+const DATA_KEY = 'isolak_content';
+
+function getPass() { return localStorage.getItem(PASS_KEY) || DEFAULT_PASSWORD; }
+
+function getData() {
+  const raw = localStorage.getItem(DATA_KEY);
+  if (raw) return JSON.parse(raw);
+  // Seed with real site data
+  return {
+    properties: [
+      { id: uid(), title: 'Oxford by Isolak', slug: 'oxford-by-isolak', location: 'Olode, Ibadan', status: 'Selling', price: '22,000.00', oldPrice: '', description: 'Own 300, 450, 600 SQM or 500 SQM commercial plots in this 100-acre estate at Olode, Ibadan.', acreage: '100 acres', dimensions: '300 Sqm, 450 Sqm, 600 Sqm\n500 Sqm Commercial', landmarks: 'Circular Road, International Airport, Iwo Road Express via Academy Bus Stop', categories: ['Investment','Commercial','Residential'], amenities: ['Gate House','Road Network','Perimeter Fence','Electricity','24/7 Security'], images: ['https://framerusercontent.com/images/QbDFeedN7zn21YGOgHjeiuNHiC0.png','','',''] },
+      { id: uid(), title: 'The Pine-View Cottage, Phase 1', slug: 'pine-view', location: 'Ido, Ibadan', status: 'Sold out', price: '8,500.00', oldPrice: '9,500.00', description: '40 acres of prime opportunity. 450 SQM plots for investment, residential & commercial use.', acreage: '40 acres', dimensions: '450 sqm', landmarks: 'Ladoke Akintola Train Station, FRSC Ido, Ido Market', categories: ['Investment','Commercial','Residential'], amenities: ['Gate House','Road Network','Perimeter Fence','Drainage & Sewage System','Electricity','CCTV','24/7 Security'], images: ['https://framerusercontent.com/images/GwYHTzPDTSg4I39bSv17KvJy0w.png','','',''] },
+      { id: uid(), title: 'The Pine-View Cottage, Phase 2', slug: 'pine-view-phase-2', location: 'Ido, Ibadan', status: 'Selling', price: '17,500.00', oldPrice: '', description: 'Phase 1 sold out. Phase 2 is here. 20 acres with 450 & 600 SQM plots.', acreage: '20 acres', dimensions: '450 Sqm, 600 Sqm', landmarks: 'Ladoke Akintola Train Station, FRSC, Ido Market', categories: ['Investment','Residential'], amenities: ['Gate House','Road Network','Perimeter Fence','Electricity','Solar Street Lights'], images: ['https://framerusercontent.com/images/GwYHTzPDTSg4I39bSv17KvJy0w.png','','',''] },
+      { id: uid(), title: 'Isolak Havens Estate, Phase 1', slug: 'isolak-havens-estate-phase-1', location: 'Akaran, Ibadan', status: 'Selling', price: '32,400.00', oldPrice: '', description: 'Own 450 SQM or 500 SQM commercial plots in this 20-acre estate. Strategic location beside Ilaji Resorts.', acreage: '20 acres', dimensions: '450 Sqm, 500 Sqm Commercial', landmarks: 'Ilaji Resorts, Circular Road, International Airport, Olorunsogo Bus Stop', categories: ['Investment','Commercial','Residential'], amenities: ['Gate House','Road Network','Perimeter Fence','Electricity','Sport Arena','CCTV','24/7 Security'], images: ['','','',''] },
+      { id: uid(), title: 'Isolak Havens Estate, Phase 2', slug: 'isolak-havens-estate-phase-2', location: 'Akaran, Ibadan', status: 'Selling', price: '24,700.00', oldPrice: '', description: 'Secure your future with 450 SQM plots in this 50-acre land banking haven.', acreage: '50 acres', dimensions: '450 Sqm', landmarks: 'Ilaji Resorts, Circular Road, International Airport', categories: ['Investment','Landbanking'], amenities: ['Gate House','Road Network','Perimeter Fence','Electricity','24/7 Security'], images: ['','','',''] },
+      { id: uid(), title: 'Corfe Castle Estate', slug: 'corfe-castle-estate', location: 'Ayegun Olomi, Ibadan', status: 'Selling', price: '17,500.00', oldPrice: '', description: 'Secure 450 SQM in this 50-acre estate positioned on the Circular Road.', acreage: '50 acres', dimensions: '450 Sqm', landmarks: 'Circular Road, International Airport', categories: ['Investment','Landbanking'], amenities: ['Gate House','Road Network','Perimeter Fence','Electricity'], images: ['','','',''] },
+      { id: uid(), title: "Olakunle's Court", slug: 'olakunles-court', location: 'Ologuneru, Ibadan', status: 'Selling', price: '20,500.00', oldPrice: '', description: 'An exclusive 2-acre residential and investment estate in Ologuneru, Ibadan.', acreage: '2 acres', dimensions: '450 Sqm', landmarks: "God's Knot Hospital, FoodCo, Ologuneru Bus Stop, Eleyele Bus Stop", categories: ['Investment','Residential'], amenities: ['Gate House','Road Network','Perimeter Fence','Electricity'], images: ['','','',''] },
+      { id: uid(), title: 'Crystal Farmland Palace', slug: 'crystal-farmland-palace', location: 'Orile Ilugun, Abeokuta', status: 'Sold out', price: '0.00', oldPrice: '', description: 'Own 900, 1,800 or 2,700 SQM in this 30-acre farmland estate at Orile Ilugun, Abeokuta.', acreage: '30 acres', dimensions: '900 Sqm, 1,800 Sqm, 2,700 Sqm', landmarks: 'Omi Adio', categories: ['Landbanking','Farming'], amenities: [], images: ['','','',''] }
+    ],
+    blog: [
+      { id: uid(), title: 'Isolak – When is the best time to sell your property?', tag: 'Real Estate', author: 'Sophia Hayes', authorRole: 'Client Relations', date: 'Jun 22, 2026', readingTime: '7 min read', excerpt: 'Find out the ideal months to list, how market timing works, and what seasons typically bring faster sales.', image: 'https://framerusercontent.com/images/D1kCjeZ0uEfMww1AI3IuznsJvq4.png', authorImage: 'https://framerusercontent.com/images/y4Y4TskWa6wPIMDly9lsudWfReA.png', featured: true },
+      { id: uid(), title: 'Isolak Properties', tag: 'Property', author: '', authorRole: '', date: 'May 22, 2026', readingTime: '', excerpt: '', image: 'https://framerusercontent.com/images/rxHGyuinlBRwTYQWhvLWJpSoXY.png', authorImage: '', featured: false }
+    ],
+    team: [
+      { id: uid(), name: 'Ava Mitchell', role: 'Property Advisor', email: '', phone: '', bio: '', image: 'https://framerusercontent.com/images/1hiS1OJqbqi45yG74Zq5OnAo8aE.png' },
+      { id: uid(), name: 'Noah Brooks', role: 'Property Specialist', email: '', phone: '', bio: '', image: 'https://framerusercontent.com/images/COpI0DeWCn8FfYpnOFNhYaciEw.png' },
+      { id: uid(), name: 'Sophia Hayes', role: 'Client Relations', email: '', phone: '', bio: '', image: 'https://framerusercontent.com/images/y4Y4TskWa6wPIMDly9lsudWfReA.png' }
+    ]
+  };
+}
+
+function saveData(data) { localStorage.setItem(DATA_KEY, JSON.stringify(data)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+let state = {};
+let editingId = null;
+let amenities = [];
+
+// ──────────────────────────────────────────────
+// AUTH
+// ──────────────────────────────────────────────
+function doLogin() {
+  const pw = document.getElementById('login-password').value;
+  if (pw === getPass()) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    state = getData();
+    renderAll();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+function changePassword() {
+  const np = document.getElementById('new-password').value;
+  const cp = document.getElementById('confirm-password').value;
+  if (!np) return toast('Enter a new password', 'error');
+  if (np !== cp) return toast('Passwords do not match', 'error');
+  localStorage.setItem(PASS_KEY, np);
+  document.getElementById('new-password').value = '';
+  document.getElementById('confirm-password').value = '';
+  toast('Password updated ✓', 'success');
+}
+
+// ──────────────────────────────────────────────
+// NAVIGATION
+// ──────────────────────────────────────────────
+const PAGE_TITLES = { dashboard: 'Dashboard', properties: 'Properties', blog: 'Blog Posts', team: 'Team Members', export: 'Export & Deploy', settings: 'Settings' };
+
+function goTo(page) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`).classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[page];
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'properties') renderProperties();
+  if (page === 'blog') renderBlog();
+  if (page === 'team') renderTeam();
+}
+
+// ──────────────────────────────────────────────
+// RENDER ALL
+// ──────────────────────────────────────────────
+function renderAll() {
+  updateCounts();
+  renderDashboard();
+  renderProperties();
+  renderBlog();
+  renderTeam();
+}
+
+function updateCounts() {
+  const p = state.properties.length, b = state.blog.length, t = state.team.length;
+  document.getElementById('nav-prop-count').textContent = p;
+  document.getElementById('nav-blog-count').textContent = b;
+  document.getElementById('nav-team-count').textContent = t;
+  document.getElementById('stat-props').textContent = p;
+  document.getElementById('stat-blogs').textContent = b;
+  document.getElementById('stat-team').textContent = t;
+  document.getElementById('stat-selling').textContent = state.properties.filter(p => p.status === 'Selling').length;
+}
+
+// ──────────────────────────────────────────────
+// DASHBOARD
+// ──────────────────────────────────────────────
+function renderDashboard() {
+  updateCounts();
+  const propList = document.getElementById('dash-props-list');
+  const blogList = document.getElementById('dash-blog-list');
+  propList.innerHTML = state.properties.slice(0, 5).map(p => propRow(p, true)).join('') || emptyState('No properties yet');
+  blogList.innerHTML = state.blog.slice(0, 5).map(b => blogRow(b, true)).join('') || emptyState('No posts yet');
+}
+
+// ──────────────────────────────────────────────
+// PROPERTIES
+// ──────────────────────────────────────────────
+function renderProperties(search = '') {
+  const list = document.getElementById('properties-list');
+  let items = state.properties;
+  if (search) items = items.filter(p => p.title.toLowerCase().includes(search.toLowerCase()) || p.location.toLowerCase().includes(search.toLowerCase()));
+  list.innerHTML = items.map(p => propRow(p)).join('') || emptyState('No properties found');
+}
+
+function propRow(p, mini = false) {
+  const img = p.images && p.images[0] ? `<img src="${p.images[0]}" onerror="this.style.display='none'">` : '🏡';
+  const statusTag = p.status === 'Selling' ? `<span class="tag tag-green">${p.status}</span>` : p.status === 'Sold out' ? `<span class="tag tag-red">${p.status}</span>` : `<span class="tag tag-yellow">${p.status}</span>`;
+  const actions = mini ? '' : `<div class="item-actions"><button class="btn btn-outline btn-sm" onclick="openPropertyModal('${p.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteItem('properties','${p.id}')">Delete</button></div>`;
+  return `<div class="item-row"><div class="item-thumb">${img}</div><div class="item-info"><div class="item-title">${p.title}</div><div class="item-meta">${p.location || '—'} &nbsp;·&nbsp; NGN ${p.price || '0'} &nbsp;·&nbsp; ${statusTag}</div></div>${actions}</div>`;
+}
+
+function openPropertyModal(id) {
+  editingId = id || null;
+  amenities = [];
+  document.getElementById('prop-modal-title').textContent = id ? 'Edit Property' : 'Add Property';
+  switchTab('prop', 'basic', document.querySelector('.tab-btn'));
+
+  const p = id ? state.properties.find(x => x.id === id) : {};
+  ['title','location','status','price','oldPrice','description','acreage','dimensions','landmarks','img1','img2','img3','slug'].forEach(k => {
+    const el = document.getElementById('prop-' + k.replace(/([A-Z])/g, m => '-' + m.toLowerCase()));
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.value = (p && p[k]) || 'Selling';
+    else el.value = (p && p[k != null && k]) || '';
+  });
+  // Fix image fields
+  if (p && p.images) {
+    ['img1','img2','img3'].forEach((k,i) => {
+      const el = document.getElementById('prop-' + k);
+      if (el) { el.value = p.images[i] || ''; previewImg(el, 'prop-prev' + (i+1)); }
+    });
+  }
+  if (p && p.slug) document.getElementById('prop-slug').value = p.slug;
+  // Categories
+  document.querySelectorAll('.prop-cat').forEach(cb => { cb.checked = p && p.categories && p.categories.includes(cb.value); });
+  // Amenities
+  amenities = (p && p.amenities) ? [...p.amenities] : [];
+  renderAmenityTags();
+  openModal('property-modal');
+}
+
+function saveProperty() {
+  const title = document.getElementById('prop-title').value.trim();
+  if (!title) return toast('Title is required', 'error');
+
+  const categories = [...document.querySelectorAll('.prop-cat:checked')].map(c => c.value);
+  const images = ['prop-img1','prop-img2','prop-img3'].map(id => document.getElementById(id)?.value || '');
+
+  const data = {
+    title,
+    location: document.getElementById('prop-location').value,
+    status: document.getElementById('prop-status').value,
+    price: document.getElementById('prop-price').value,
+    oldPrice: document.getElementById('prop-old-price').value,
+    description: document.getElementById('prop-desc').value,
+    acreage: document.getElementById('prop-acreage').value,
+    dimensions: document.getElementById('prop-dimensions').value,
+    landmarks: document.getElementById('prop-landmarks').value,
+    slug: document.getElementById('prop-slug').value || slugify(title),
+    categories, amenities: [...amenities], images
+  };
+
+  if (editingId) {
+    const idx = state.properties.findIndex(p => p.id === editingId);
+    state.properties[idx] = { ...state.properties[idx], ...data };
+  } else {
+    state.properties.unshift({ id: uid(), ...data });
+  }
+
+  saveData(state);
+  renderAll();
+  closeModal('property-modal');
+  toast(editingId ? 'Property updated ✓' : 'Property added ✓', 'success');
+  pushToGitHub();
+}
+
+// ──────────────────────────────────────────────
+// BLOG
+// ──────────────────────────────────────────────
+function renderBlog(search = '') {
+  const list = document.getElementById('blog-list');
+  let items = state.blog;
+  if (search) items = items.filter(b => b.title.toLowerCase().includes(search.toLowerCase()) || (b.author||'').toLowerCase().includes(search.toLowerCase()));
+  list.innerHTML = items.map(b => blogRow(b)).join('') || emptyState('No blog posts yet');
+}
+
+function blogRow(b, mini = false) {
+  const img = b.image ? `<img src="${b.image}" onerror="this.style.display='none'">` : '📝';
+  const featuredTag = b.featured ? '<span class="tag tag-blue" style="margin-left:4px;">Featured</span>' : '';
+  const actions = mini ? '' : `<div class="item-actions"><button class="btn btn-outline btn-sm" onclick="openBlogModal('${b.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteItem('blog','${b.id}')">Delete</button></div>`;
+  return `<div class="item-row"><div class="item-thumb">${img}</div><div class="item-info"><div class="item-title">${b.title}${featuredTag}</div><div class="item-meta">${b.author || 'No author'} &nbsp;·&nbsp; ${b.date || 'No date'} &nbsp;·&nbsp; <span class="tag tag-orange">${b.tag || 'Uncategorised'}</span></div></div>${actions}</div>`;
+}
+
+function openBlogModal(id) {
+  editingId = id || null;
+  document.getElementById('blog-modal-title').textContent = id ? 'Edit Blog Post' : 'Add Blog Post';
+  const b = id ? state.blog.find(x => x.id === id) : {};
+  ['title','tag','author','date','excerpt','image','authorImage'].forEach(k => {
+    const el = document.getElementById('blog-' + k.replace(/([A-Z])/g, m => '-' + m.toLowerCase()));
+    if (el) el.value = (b && b[k]) || '';
+  });
+  document.getElementById('blog-author-role').value = (b && b.authorRole) || '';
+  document.getElementById('blog-reading-time').value = (b && b.readingTime) || '';
+  document.getElementById('blog-featured').value = (b && b.featured) ? 'true' : 'false';
+  if (b && b.image) previewImg(document.getElementById('blog-image'), 'blog-prev');
+  openModal('blog-modal');
+}
+
+function saveBlogPost() {
+  const title = document.getElementById('blog-title').value.trim();
+  if (!title) return toast('Title is required', 'error');
+
+  const data = {
+    title,
+    tag: document.getElementById('blog-tag').value,
+    author: document.getElementById('blog-author').value,
+    authorRole: document.getElementById('blog-author-role').value,
+    date: document.getElementById('blog-date').value,
+    readingTime: document.getElementById('blog-reading-time').value,
+    excerpt: document.getElementById('blog-excerpt').value,
+    image: document.getElementById('blog-image').value,
+    authorImage: document.getElementById('blog-author-img').value,
+    featured: document.getElementById('blog-featured').value === 'true'
+  };
+
+  if (editingId) {
+    const idx = state.blog.findIndex(b => b.id === editingId);
+    state.blog[idx] = { ...state.blog[idx], ...data };
+  } else {
+    state.blog.unshift({ id: uid(), ...data });
+  }
+
+  saveData(state);
+  renderAll();
+  closeModal('blog-modal');
+  toast(editingId ? 'Post updated ✓' : 'Post added ✓', 'success');
+  pushToGitHub();
+}
+
+// ──────────────────────────────────────────────
+// TEAM
+// ──────────────────────────────────────────────
+function renderTeam() {
+  const list = document.getElementById('team-list');
+  list.innerHTML = state.team.map(m => teamRow(m)).join('') || emptyState('No team members yet');
+}
+
+function teamRow(m) {
+  const img = m.image ? `<img src="${m.image}" style="border-radius:50%;width:40px;height:40px;object-fit:cover;" onerror="this.style.display='none'">` : '👤';
+  return `<div class="item-row"><div class="item-thumb" style="border-radius:50%;width:40px;height:40px;">${img}</div><div class="item-info"><div class="item-title">${m.name}</div><div class="item-meta">${m.role || '—'} ${m.email ? '&nbsp;·&nbsp; ' + m.email : ''}</div></div><div class="item-actions"><button class="btn btn-outline btn-sm" onclick="openTeamModal('${m.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteItem('team','${m.id}')">Delete</button></div></div>`;
+}
+
+function openTeamModal(id) {
+  editingId = id || null;
+  document.getElementById('team-modal-title').textContent = id ? 'Edit Team Member' : 'Add Team Member';
+  const m = id ? state.team.find(x => x.id === id) : {};
+  ['name','role','email','phone','bio','image'].forEach(k => {
+    const el = document.getElementById('team-' + k);
+    if (el) el.value = (m && m[k]) || '';
+  });
+  if (m && m.image) previewImg(document.getElementById('team-image'), 'team-prev');
+  openModal('team-modal');
+}
+
+function saveTeamMember() {
+  const name = document.getElementById('team-name').value.trim();
+  if (!name) return toast('Name is required', 'error');
+
+  const data = {
+    name,
+    role: document.getElementById('team-role').value,
+    email: document.getElementById('team-email').value,
+    phone: document.getElementById('team-phone').value,
+    bio: document.getElementById('team-bio').value,
+    image: document.getElementById('team-image').value
+  };
+
+  if (editingId) {
+    const idx = state.team.findIndex(m => m.id === editingId);
+    state.team[idx] = { ...state.team[idx], ...data };
+  } else {
+    state.team.unshift({ id: uid(), ...data });
+  }
+
+  saveData(state);
+  renderAll();
+  closeModal('team-modal');
+  toast(editingId ? 'Member updated ✓' : 'Member added ✓', 'success');
+  pushToGitHub();
+}
+
+// ──────────────────────────────────────────────
+// DELETE
+// ──────────────────────────────────────────────
+function deleteItem(collection, id) {
+  if (!confirm('Delete this item? This cannot be undone.')) return;
+  state[collection] = state[collection].filter(x => x.id !== id);
+  saveData(state);
+  renderAll();
+  toast('Deleted', 'success');
+}
+
+// ──────────────────────────────────────────────
+// AMENITIES
+// ──────────────────────────────────────────────
+function addAmenity() {
+  const input = document.getElementById('amenity-input');
+  const val = input.value.trim();
+  if (!val || amenities.includes(val)) return;
+  amenities.push(val);
+  input.value = '';
+  renderAmenityTags();
+}
+
+function removeAmenity(idx) {
+  amenities.splice(idx, 1);
+  renderAmenityTags();
+}
+
+function renderAmenityTags() {
+  document.getElementById('amenity-list').innerHTML = amenities.map((a, i) =>
+    `<span class="amenity-tag">${a}<button onclick="removeAmenity(${i})">×</button></span>`
+  ).join('');
+}
+
+// ──────────────────────────────────────────────
+// EXPORT / GITHUB
+// ──────────────────────────────────────────────
+function exportJSON(type) {
+  const data = state[type];
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = type + '.json';
+  a.click();
+  toast(`Downloaded ${type}.json ✓`, 'success');
+}
+
+async function exportAll() {
+  // Export individual files
+  ['properties','blog','team'].forEach(exportJSON);
+  toast('All 3 JSON files downloaded ✓', 'success');
+}
+
+function saveGitHubSettings() {
+  const token = document.getElementById('gh-token').value.trim();
+  const repo = document.getElementById('gh-repo').value.trim();
+  const branch = document.getElementById('gh-branch').value.trim() || 'main';
+  if (!token || !repo) return toast('Token and repo are required', 'error');
+  localStorage.setItem('gh_token', token);
+  localStorage.setItem('gh_repo', repo);
+  localStorage.setItem('gh_branch', branch);
+  toast('GitHub settings saved ✓ — changes will auto-deploy', 'success');
+}
+
+async function pushToGitHub() {
+  const token = localStorage.getItem('gh_token');
+  const repo = localStorage.getItem('gh_repo');
+  const branch = localStorage.getItem('gh_branch') || 'main';
+  if (!token || !repo) return; // not configured
+
+  const files = { 'data/properties.json': state.properties, 'data/blog.json': state.blog, 'data/team.json': state.team };
+
+  for (const [path, data] of Object.entries(files)) {
+    try {
+      // Get current SHA
+      let sha;
+      const get = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`, {
+        headers: { Authorization: `token ${token}` }
+      });
+      if (get.ok) { const j = await get.json(); sha = j.sha; }
+
+      const body = { message: `Admin: update ${path}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))), branch };
+      if (sha) body.sha = sha;
+
+      await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+        method: 'PUT',
+        headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+    } catch(e) { /* silent */ }
+  }
+  toast('Pushed to GitHub — deploy triggered ✓', 'success');
+}
+
+// ──────────────────────────────────────────────
+// HELPERS
+// ──────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+function switchTab(prefix, tab, btn) {
+  ['basic','details','media'].forEach(t => {
+    const el = document.getElementById(`${prefix}-tab-${t}`);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function previewImg(input, previewId) {
+  const el = document.getElementById(previewId);
+  if (!el) return;
+  const url = typeof input === 'string' ? input : input.value;
+  if (url) { el.src = url; el.classList.add('show'); }
+  else { el.src = ''; el.classList.remove('show'); }
+}
+
+function emptyState(msg) {
+  return `<div class="empty-state"><div class="empty-icon">📭</div><p>${msg}</p></div>`;
+}
+
+function slugify(text) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+function toast(msg, type = '') {
+  const c = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = (type === 'success' ? '✓ ' : type === 'error' ? '✕ ' : '') + msg;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function clearAllData() {
+  if (!confirm('This will delete all properties, blog posts and team members from this browser. Are you sure?')) return;
+  localStorage.removeItem(DATA_KEY);
+  state = getData();
+  renderAll();
+  toast('Data reset', 'success');
+}
+
+// Load GitHub settings if saved
+window.addEventListener('DOMContentLoaded', () => {
+  const ghToken = localStorage.getItem('gh_token');
+  const ghRepo = localStorage.getItem('gh_repo');
+  const ghBranch = localStorage.getItem('gh_branch');
+  if (ghToken) document.getElementById('gh-token').value = ghToken;
+  if (ghRepo) document.getElementById('gh-repo').value = ghRepo;
+  if (ghBranch) document.getElementById('gh-branch').value = ghBranch;
+});
+</script>
+</body>
+</html>
